@@ -1,0 +1,21 @@
+{
+    "manifest_version": 2,
+    "name": "Discuit Chat",
+    "description": "Adds a Party Line to Discuit",
+    "version": "0.1.0",
+    "content_scripts": [{
+        "matches": ["https://*.discuit.net/*"],
+        "js": ["index.js"]
+    }],
+    "icons": {
+        "48": "icon.png",
+        "96": "icon.png"
+    },
+    "permissions": [
+        "<all_urls>",
+        "tabs"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    }
+}
