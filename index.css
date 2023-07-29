@@ -1,0 +1,26 @@
+.text-primary {
+    color: #6B02F2 !important;
+}
+
+.text-primary:hover {
+    color: #5800C9 !important;
+}
+
+.btn-link {
+    color: #6B02F2 !important;
+}
+
+.btn-link:hover {
+    color: #5800C9 !important;
+}
+
+.btn-primary {
+    --bs-btn-bg: #6B02F2 !important;
+    --bs-btn-border-color: #6B02F2 !important;
+    --bs-btn-hover-bg: #5800C9 !important;
+    --bs-btn-hover-border-color: #5800C9 !important;
+}
+
+.bg-primary {
+    background-color: #6B02F2 !important;
+}

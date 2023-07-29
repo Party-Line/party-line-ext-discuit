@@ -4,16 +4,20 @@
     "description": "Adds a Party Line to Discuit",
     "version": "0.1.0",
     "content_scripts": [{
-        "matches": ["https://*.discuit.net/*"],
-        "js": ["index.js"]
+        "matches": [
+            "https://*.discuit.net/*",
+            "https://*.discuitchat.net/*",
+            "http://*.discuitchat.local/*"
+        ],
+        "js": ["index.js"],
+        "css": ["index.css"]
     }],
     "icons": {
         "48": "icon.png",
         "96": "icon.png"
     },
     "permissions": [
-        "<all_urls>",
-        "tabs"
+        "<all_urls>"
     ],
     "background": {
         "scripts": ["background.js"]
