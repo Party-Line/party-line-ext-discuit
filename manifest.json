@@ -9,8 +9,13 @@
             "https://*.discuitchat.net/*",
             "http://*.discuitchat.local/*"
         ],
-        "js": ["index.js"],
-        "css": ["index.css"]
+        "js": [
+            "browser-polyfill.min.js",
+            "index.js"
+        ],
+        "css": [
+            "index.css"
+        ]
     }],
     "icons": {
         "48": "icon.png",
@@ -20,6 +25,9 @@
         "<all_urls>"
     ],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": [
+            "browser-polyfill.min.js",
+            "background.js"
+        ]
     }
 }

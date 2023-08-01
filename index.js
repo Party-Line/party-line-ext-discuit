@@ -1,4 +1,5 @@
 // about:debugging#/runtime/this-firefox
+// chrome://extensions
 
 function toggle() {
     // send a message to the background 
@@ -8,16 +9,14 @@ function toggle() {
             action: 'toggle',
             // display the window over the right sidebar
             left: document.querySelector('.sidebar-right').offsetLeft - 5
-        },
-        function(win) {
-            // callback
         }
     )
 }
 
 // TODO: get the minimize button to change window height too
 // TODO: fix chat window height / shrinking issue
-// TODO: add a loading screen for the window
+// TODO: add a loading screen for the chat window
+// TODO: default to a standard window size when it can't fit
 function init() {
     // get the Discuit navbar
     let dtNavbar = document.querySelector('.navbar')

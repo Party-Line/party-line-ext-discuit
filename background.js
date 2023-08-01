@@ -25,13 +25,25 @@ function toggle(callback, winLeft) {
             height: 650
         }
         
-        browser.windows.create(settings, function (win) {
-            windowChat = win
-        })
+        browser.windows.create(settings)
+        .then(
+            // on created
+            function(win) {
+                windowChat = win
+                
+                browser.windows.onRemoved.addListener((winId) => {
+                    windowChat = null
+                });
+            },
+            
+            // on error
+            function(err) {
+            
+            }
+        );
     } else {
-        browser.windows.remove(windowChat.id)
-        .then(function() {}, function(err) {
-            windowChat = null
+        browser.windows.update(windowChat.id, {
+            focused: true
         })
     }
 }
