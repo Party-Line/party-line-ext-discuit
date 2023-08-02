@@ -8,7 +8,7 @@ function toggle(callback, winLeft) {
             // you must add this to your hosts
             // to debug / run the app locally
             // 127.0.0.1 discuitchat.local
-            // url: 'http://discuitchat.local',
+            // url: 'http://localhost',
             url: 'https://discuitchat.net',
             
             // display the window over the sidebar
