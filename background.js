@@ -5,9 +5,6 @@ function toggle(callback, winLeft) {
         let settings = {
             type: 'popup',
             
-            // you must add this to your hosts
-            // to debug / run the app locally
-            // 127.0.0.1 discuitchat.local
             // url: 'http://localhost',
             url: 'https://discuitchat.net',
             

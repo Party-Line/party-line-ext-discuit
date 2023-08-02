@@ -7,7 +7,7 @@
         "matches": [
             "https://*.discuit.net/*",
             "https://*.discuitchat.net/*",
-            "http://*.discuitchat.local/*"
+            "http://localhost/*"
         ],
         "js": [
             "browser-polyfill.min.js",
