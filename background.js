@@ -1,9 +1,42 @@
-var windowChat = null
+// look for messages from the content scripts
+browser.runtime.onMessage.addListener(function(request, sender, callback) {
+    if (request) {
+        switch (request.action) {
+            case 'window-toggle' :
+                winToggle(callback, request.left)
+                break
+            case 'window-minimize' :
+                winMinimize(callback)
+                break
+            case 'window-maximize' :
+                winMaximize(callback)
+                break
+            case 'window-loaded' :
+                if (request.get) {
+                    callback(winChatLoaded)
+                } else {
+                    winChatLoaded = true
+                }
+                break
+        }
+    }
+})
 
-function toggle(callback, winLeft) {
-    if (windowChat == null) {
+var winChatId = null
+var winChatLoaded = false
+
+function winToggle(callback, winLeft) {
+    if (winChatId === null) {
         let settings = {
+            // panel would be preferrable, so we don't have 
+            // the title / button bar, but it is deprecated
             type: 'popup',
+            
+            // this does not work
+            // alwaysOnTop: true,
+            
+            focused: true,
+            state: 'normal',
             
             // url: 'http://localhost',
             url: 'https://discuitchat.net',
@@ -22,35 +55,96 @@ function toggle(callback, winLeft) {
             height: 650
         }
         
+        // let the script know the window is loading
+        callback({ action: 'window-loading' })
+        
+        // create the chat window
         browser.windows.create(settings)
         .then(
             // on created
             function(win) {
-                windowChat = win
+                winChatId = win.id
                 
                 browser.windows.onRemoved.addListener((winId) => {
-                    windowChat = null
-                });
+                    winChatId = null
+                    winChatLoaded = false
+                })
             },
             
             // on error
             function(err) {
             
             }
-        );
+        )
     } else {
-        browser.windows.update(windowChat.id, {
-            focused: true
-        })
+        // get the chat window info
+        browser.windows.get(winChatId)
+        .then(
+            // on success
+            function(win) {
+                // minimize the chat window when open
+                if (win.state == 'normal') {
+                    browser.windows.update(win.id, {
+                        // we use state / minimized because
+                        // focused / false does not work
+                        state: 'minimized'
+                    })
+                // otherwise open it to normal size
+                } else {
+                    browser.windows.update(win.id, {
+                        state: 'normal'
+                    })
+                }
+            },
+            
+            // on error
+            function(err) {
+            
+            }
+        )
     }
 }
 
-browser.runtime.onMessage.addListener(function(request, sender, callback) {
-    if (request) {
-        switch (request.action) {
-            case 'toggle' :
-                toggle(callback, request.left)
-                break
+function winMinimize(callback) {
+    if (winChatId === null) { return }
+    
+    // get the chat window info
+    browser.windows.get(winChatId)
+    .then(
+        // on success
+        function(win) {
+            if (win.state != 'minimized') {
+                browser.windows.update(win.id, {
+                    state: 'minimized'
+                })
+            }
+        },
+        
+        // on error
+        function(err) {
+        
         }
-    }
-})
+    )
+}
+
+function winMaximize(callback) {
+    if (winChatId === null) { return }
+    
+    // get the chat window info
+    browser.windows.get(winChatId)
+    .then(
+        // on success
+        function(win) {
+            if (win.state != 'maximized') {
+                browser.windows.update(win.id, {
+                    state: 'maximized'
+                })
+            }
+        },
+        
+        // on error
+        function(err) {
+        
+        }
+    )
+}
