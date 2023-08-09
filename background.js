@@ -3,7 +3,7 @@ browser.runtime.onMessage.addListener(function(request, sender, callback) {
     if (request) {
         switch (request.action) {
             case 'window-toggle' :
-                winToggle(callback, request.left)
+                winToggle(callback, request.mobile, request.left)
                 break
             case 'window-minimize' :
                 winMinimize(callback)
@@ -25,8 +25,39 @@ browser.runtime.onMessage.addListener(function(request, sender, callback) {
 var winChatId = null
 var winChatLoaded = false
 
-function winToggle(callback, winLeft) {
+function winToggle(callback, mobile, winLeft) {
     if (winChatId === null) {
+        // go fullscreen on smaller devices
+        // TODO: verify this actually works on mobile
+        //       state / maximized doesn't seem to work
+        if (mobile) {
+            winState = 'normal'
+            
+            winLeft = 0
+            winWidth = window.screen.width
+            
+            // 5 is spacing
+            winTop = 5
+            
+            // - 45 is the titlebar height
+            winHeight = window.screen.height - 45
+        } else {
+            winState = 'normal'
+            
+            // display the window over the sidebar
+            winLeft = winLeft
+            
+            // expand it until the edge of the screen 
+            // - 20 is the scrollbar width + spacing
+            winWidth = window.screen.width - winLeft - 20
+            
+            // display the window under the navbar
+            winTop = window.screen.height - 650
+            
+            // expand it until the edge of the screen
+            winHeight = 650
+        }
+        
         let settings = {
             // panel would be preferrable, so we don't have 
             // the title / button bar, but it is deprecated
@@ -36,23 +67,15 @@ function winToggle(callback, winLeft) {
             // alwaysOnTop: true,
             
             focused: true,
-            state: 'normal',
+            state: winState,
             
             // url: 'http://localhost',
             url: 'https://discuitchat.net',
             
-            // display the window over the sidebar
             left: winLeft,
-            
-            // expand it until the edge of the screen 
-            // - 20 is the scrollbar width + spacing
-            width: window.screen.width - winLeft - 20,
-            
-            // display the window under the navbar
-            top: window.screen.height - 650,
-            
-            // expand it until the edge of the screen
-            height: 650
+            width: winWidth,
+            top: winTop,
+            height: winHeight
         }
         
         // let the script know the window is loading
@@ -83,7 +106,7 @@ function winToggle(callback, winLeft) {
             // on success
             function(win) {
                 // minimize the chat window when open
-                if (win.state == 'normal') {
+                if (win.state !== 'minimized') {
                     browser.windows.update(win.id, {
                         // we use state / minimized because
                         // focused / false does not work
@@ -113,7 +136,7 @@ function winMinimize(callback) {
     .then(
         // on success
         function(win) {
-            if (win.state != 'minimized') {
+            if (win.state !== 'minimized') {
                 browser.windows.update(win.id, {
                     state: 'minimized'
                 })
@@ -135,7 +158,7 @@ function winMaximize(callback) {
     .then(
         // on success
         function(win) {
-            if (win.state != 'maximized') {
+            if (win.state !== 'maximized') {
                 browser.windows.update(win.id, {
                     state: 'maximized'
                 })

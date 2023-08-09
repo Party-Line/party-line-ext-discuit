@@ -2,11 +2,10 @@
 // chrome://extensions
 
 // TODO: fix chat window height / shrinking issue
-// TODO: get persistent chat logging working
-// TODO: get window to go fullscreen on mobile
-// TODO: get window to appear on all pages (e.g. in posts and notifications)
-// TODO: verify everything is working on all Desktop browsers and iPhone Chrome
 // TODO: figure out branding for icons and Disc header
+
+// TODO: verify everything is working on all Desktop browsers and iPhone Chrome
+// TODO: get persistent chat logging working
 // TODO: get Discuit accounts / login integrated
 
 // minimize the chat window when Discuit is clicked
@@ -63,11 +62,29 @@ function winLoading() {
 function winToggle(event) {
     event.stopPropagation()
     
+    // display the window over the main sidebar
+    let sidebar = document.querySelector('.sidebar-right')
+    
+    // display the window over the last 1/3 of the screen
+    // this is needed for pages that don't have a sidebar
+    let sidebarLeft = (window.screen.width / 3) * 2
+    
+    if (sidebar) {
+        sidebarLeft = sidebar.offsetLeft - 5
+    } else {
+        // display the window over the post sidebar
+        sidebar = document.querySelector('aside .right')
+        
+        if (sidebar) {
+            sidebarLeft = sidebar.offsetLeft - 5
+        }
+    }
+    
     browser.runtime.sendMessage(
         {
             action: 'window-toggle',
-            // display the window over the right sidebar
-            left: document.querySelector('.sidebar-right').offsetLeft - 5
+            mobile: (window.screen.width < 900) ? true : false,
+            left: sidebarLeft
         }
     )
     .then(
