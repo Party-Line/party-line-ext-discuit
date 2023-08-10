@@ -5,4 +5,17 @@ window.addEventListener('message', (event) => {
     
     // send them to the background script
     browser.runtime.sendMessage(event.data)
+    .then(
+            // on callback
+            function(message) {
+                if (message) {
+                    console.log('returning', message)
+                }
+            },
+            
+            // on error
+            function(err) {
+                // TODO
+            }
+        )
 })

@@ -14,11 +14,11 @@ window.addEventListener('click', (event) => {
 })
 
 // handle callback messages
-function onCallback(request) {
+function onCallback(message) {
     let plToggle = document.querySelector('#pl-toggle')
     
-    if (request) {
-        switch (request.action) {
+    if (message) {
+        switch (message.action) {
             case 'window-loading' :
                 // show the loading icon
                 plToggle.innerHTML = '⏳'
@@ -93,7 +93,7 @@ function winToggle(event) {
         
         // on error
         function(err) {
-        
+            // TODO
         }
     )
 }
@@ -126,6 +126,8 @@ function init() {
         } else {
             console.log('Party Line - The ".navbar .right" column is missing')
         }
+        
+        browser.runtime.sendMessage({ action: 'window-init' })
     }
 }
 

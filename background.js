@@ -2,6 +2,9 @@
 browser.runtime.onMessage.addListener(function(request, sender, callback) {
     if (request) {
         switch (request.action) {
+            case 'window-init' :
+                winInit()
+                break
             case 'window-toggle' :
                 winToggle(callback, request.mobile, request.left)
                 break
@@ -18,12 +21,22 @@ browser.runtime.onMessage.addListener(function(request, sender, callback) {
                     winChatLoaded = true
                 }
                 break
+            case 'window-cookies' :
+                callback(winCookies)
+                break
         }
     }
 })
 
 var winChatId = null
 var winChatLoaded = false
+var winCookies = null
+
+function winInit() {
+    // get the Discuit cookies
+    browser.cookies.getAll({ url: 'https://discuit.net' })
+    .then((cookies) => { winCookies = cookies })
+}
 
 function winToggle(callback, mobile, winLeft) {
     if (winChatId === null) {
@@ -91,6 +104,7 @@ function winToggle(callback, mobile, winLeft) {
                 browser.windows.onRemoved.addListener((winId) => {
                     winChatId = null
                     winChatLoaded = false
+                    winCookies = null
                 })
             },
             

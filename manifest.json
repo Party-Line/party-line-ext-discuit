@@ -32,7 +32,8 @@
         "96": "icon.png"
     },
     "permissions": [
-        "<all_urls>"
+        "<all_urls>",
+        "cookies"
     ],
     "background": {
         "scripts": [
