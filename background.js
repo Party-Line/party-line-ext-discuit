@@ -1,5 +1,5 @@
 // look for messages from the content scripts
-browser.runtime.onMessage.addListener(function(request, sender, callback) {
+browser.runtime.onMessage.addListener(function (request, sender, callback) {
     if (request) {
         switch (request.action) {
             case 'window-init' :
@@ -22,7 +22,7 @@ browser.runtime.onMessage.addListener(function(request, sender, callback) {
                 }
                 break
             case 'window-cookies' :
-                callback(winCookies)
+                callback({ action: request.action, data: winCookies })
                 break
         }
     }
@@ -98,7 +98,7 @@ function winToggle(callback, mobile, winLeft) {
         browser.windows.create(settings)
         .then(
             // on created
-            function(win) {
+            function (win) {
                 winChatId = win.id
                 
                 browser.windows.onRemoved.addListener((winId) => {
@@ -109,8 +109,8 @@ function winToggle(callback, mobile, winLeft) {
             },
             
             // on error
-            function(err) {
-            
+            function (err) {
+                // TODO
             }
         )
     } else {
@@ -118,7 +118,7 @@ function winToggle(callback, mobile, winLeft) {
         browser.windows.get(winChatId)
         .then(
             // on success
-            function(win) {
+            function (win) {
                 // minimize the chat window when open
                 if (win.state !== 'minimized') {
                     browser.windows.update(win.id, {
@@ -135,8 +135,8 @@ function winToggle(callback, mobile, winLeft) {
             },
             
             // on error
-            function(err) {
-            
+            function (err) {
+                // TODO
             }
         )
     }
@@ -149,7 +149,7 @@ function winMinimize(callback) {
     browser.windows.get(winChatId)
     .then(
         // on success
-        function(win) {
+        function (win) {
             if (win.state !== 'minimized') {
                 browser.windows.update(win.id, {
                     state: 'minimized'
@@ -158,8 +158,8 @@ function winMinimize(callback) {
         },
         
         // on error
-        function(err) {
-        
+        function (err) {
+            // TODO
         }
     )
 }
@@ -171,7 +171,7 @@ function winMaximize(callback) {
     browser.windows.get(winChatId)
     .then(
         // on success
-        function(win) {
+        function (win) {
             if (win.state !== 'maximized') {
                 browser.windows.update(win.id, {
                     state: 'maximized'
@@ -180,8 +180,8 @@ function winMaximize(callback) {
         },
         
         // on error
-        function(err) {
-        
+        function (err) {
+            // TODO
         }
     )
 }

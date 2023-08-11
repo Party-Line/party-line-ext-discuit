@@ -39,7 +39,7 @@ function winLoading() {
     browser.runtime.sendMessage({ action: 'window-loaded', get: true })
     .then(
         // on callback
-        function(loaded) {
+        function (loaded) {
             if (loaded) {
                 // hide the loading icon
                 plToggle.innerHTML = '💬️'
@@ -92,7 +92,7 @@ function winToggle(event) {
         onCallback,
         
         // on error
-        function(err) {
+        function (err) {
             // TODO
         }
     )
