@@ -2,9 +2,6 @@
 browser.runtime.onMessage.addListener(function (request, sender, callback) {
     if (request) {
         switch (request.action) {
-            case 'window-init' :
-                winInit()
-                break
             case 'window-toggle' :
                 winToggle(callback, request.mobile, request.left)
                 break
@@ -16,30 +13,63 @@ browser.runtime.onMessage.addListener(function (request, sender, callback) {
                 break
             case 'window-loaded' :
                 if (request.get) {
-                    callback(winChatLoaded)
+                    callback(winLoaded)
                 } else {
-                    winChatLoaded = true
+                    winLoaded = true
                 }
                 break
-            case 'window-cookies' :
-                callback({ action: request.action, data: winCookies })
+            case 'window-user' :
+                callback({ action: request.action, data: winUser })
                 break
+            case 'window-communities' :
+                callback({ action: request.action, data: winCommunities })
+                break
+            case 'ext-loaded' :
+                if (request.get) {
+                    callback(extLoaded)
+                }
+                break
+            
         }
     }
 })
 
-var winChatId = null
-var winChatLoaded = false
-var winCookies = null
+var winId = null
+var winLoaded = false
+var winUser = null
+var winCommunities = null
+var extLoaded = false
 
-function winInit() {
-    // get the Discuit cookies
-    browser.cookies.getAll({ url: 'https://discuit.net' })
-    .then((cookies) => { winCookies = cookies })
+// Note: onMessage callbacks can not be called within a fetch promise
+// and so the client can't make API calls and get a response back.
+// So, to get around this we get all API data during window creation
+// and cache it for later usage.
+function apiInit() {
+    let pUser = fetch('https://discuit.net/api/_user', {
+        method: 'GET',
+        credentials: 'include'
+    })
+    .then((response) => response.json())
+    .then((user) => {
+        winUser = user
+    })
+    
+    let pCommunities = fetch('https://discuit.net/api/communities?set=subscribed', {
+        method: 'GET',
+        credentials: 'include'
+    })
+    .then((response) => response.json())
+    .then((communities) => {
+        winCommunities = communities
+    })
+    
+    Promise.all([pUser, pCommunities]).then((values) => {
+        extLoaded = true
+    })
 }
 
 function winToggle(callback, mobile, winLeft) {
-    if (winChatId === null) {
+    if (winId === null) {
         // go fullscreen on smaller devices
         // TODO: verify this actually works on mobile
         //       state / maximized doesn't seem to work
@@ -94,17 +124,22 @@ function winToggle(callback, mobile, winLeft) {
         // let the script know the window is loading
         callback({ action: 'window-loading' })
         
+        // get the API data
+        apiInit()
+        
         // create the chat window
         browser.windows.create(settings)
         .then(
             // on created
             function (win) {
-                winChatId = win.id
+                winId = win.id
                 
-                browser.windows.onRemoved.addListener((winId) => {
-                    winChatId = null
-                    winChatLoaded = false
-                    winCookies = null
+                browser.windows.onRemoved.addListener((id) => {
+                    winId = null
+                    winLoaded = false
+                    winUser = null
+                    winCommunities = null
+                    extLoaded = false
                 })
             },
             
@@ -115,7 +150,7 @@ function winToggle(callback, mobile, winLeft) {
         )
     } else {
         // get the chat window info
-        browser.windows.get(winChatId)
+        browser.windows.get(winId)
         .then(
             // on success
             function (win) {
@@ -143,10 +178,10 @@ function winToggle(callback, mobile, winLeft) {
 }
 
 function winMinimize(callback) {
-    if (winChatId === null) { return }
+    if (winId === null) { return }
     
     // get the chat window info
-    browser.windows.get(winChatId)
+    browser.windows.get(winId)
     .then(
         // on success
         function (win) {
@@ -165,10 +200,10 @@ function winMinimize(callback) {
 }
 
 function winMaximize(callback) {
-    if (winChatId === null) { return }
+    if (winId === null) { return }
     
     // get the chat window info
-    browser.windows.get(winChatId)
+    browser.windows.get(winId)
     .then(
         // on success
         function (win) {

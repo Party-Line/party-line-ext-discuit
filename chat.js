@@ -9,18 +9,20 @@ window.addEventListener('message', (event) => {
             // on callback
             function(message) {
                 if (message) {
+                    let value = (event.data.get) ? message : message.data
+                    
                     // browsers no longer allow you to send data from an extension to a webpage in a custom event
                     // and so we save the data to session storage and dispatch an event telling the webpage to get it
-                    sessionStorage.setItem(message.action, JSON.stringify(message.data))
-                    window.dispatchEvent(new Event('ext-' + message.action));
+                    sessionStorage.setItem(event.data.action, JSON.stringify(value))
+                    window.dispatchEvent(new Event(event.data.action));
                 }
             },
             
             // on error
             function(err) {
                 if (err) {
-                    sessionStorage.setItem(message.action + '-error', JSON.stringify(err))
-                    window.dispatchEvent(new Event('ext-' + message.action + '-error'));
+                    sessionStorage.setItem(event.data.action + '-error', JSON.stringify(err))
+                    window.dispatchEvent(new Event(event.data.action + '-error'));
                 }
             }
         )

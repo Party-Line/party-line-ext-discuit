@@ -126,8 +126,6 @@ function init() {
         } else {
             console.log('Party Line - The ".navbar .right" column is missing')
         }
-        
-        browser.runtime.sendMessage({ action: 'window-init' })
     }
 }
 
