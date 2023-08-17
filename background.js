@@ -18,40 +18,72 @@ browser.runtime.onMessage.addListener(function (request, sender, callback) {
                     winLoaded = true
                 }
                 break
-            case 'window-user' :
-                callback({ action: request.action, data: winUser })
-                break
-            case 'window-communities' :
-                callback({ action: request.action, data: winCommunities })
+            case 'window-verify' :
+                // verify the data from the client matches what we have in the extension
+                if (request.data.sid == disSession && request.data.username == disUser.username) {
+                    callback({ action: request.action, data: request.data.jwt })
+                } else {
+                    callback({ action: request.action, data: null })
+                }
                 break
             case 'ext-loaded' :
                 if (request.get) {
                     callback(extLoaded)
                 }
                 break
-            
+            case 'ext-data' :
+                callback({
+                    action: request.action,
+                    
+                    // TODO: distill the Discuit specific community 
+                    // data into a common object format
+                    data: {
+                        sid: disSession,
+                        username: disUser.username,
+                        channels: disCommunities
+                    }
+                })
+                break
         }
     }
 })
 
 var winId = null
 var winLoaded = false
-var winUser = null
-var winCommunities = null
+
+var disCookies = null
+var disSession = null
+var disUser = null
+var disCommunities = null
+
 var extLoaded = false
 
 // Note: onMessage callbacks can not be called within a fetch promise
 // and so the client can't make API calls and get a response back.
 // So, to get around this we get all API data during window creation
 // and cache it for later usage.
-function apiInit() {
+function disInit() {
+    let pCookies = browser.cookies.getAll({ url: 'https://discuit.net' })
+    .then((cookies) => {
+        disCookies = cookies
+        
+        for (let key in disCookies) {
+            let cookie = disCookies[key];
+            
+            if (cookie.name == 'SID') {
+                disSession = cookie.value
+                break
+            }
+        }
+    })
+
     let pUser = fetch('https://discuit.net/api/_user', {
         method: 'GET',
         credentials: 'include'
     })
     .then((response) => response.json())
     .then((user) => {
-        winUser = user
+        disUser = user
     })
     
     let pCommunities = fetch('https://discuit.net/api/communities?set=subscribed', {
@@ -60,10 +92,10 @@ function apiInit() {
     })
     .then((response) => response.json())
     .then((communities) => {
-        winCommunities = communities
+        disCommunities = communities
     })
     
-    Promise.all([pUser, pCommunities]).then((values) => {
+    Promise.all([pCookies, pUser, pCommunities]).then((values) => {
         extLoaded = true
     })
 }
@@ -124,8 +156,8 @@ function winToggle(callback, mobile, winLeft) {
         // let the script know the window is loading
         callback({ action: 'window-loading' })
         
-        // get the API data
-        apiInit()
+        // get the Discuit data
+        disInit()
         
         // create the chat window
         browser.windows.create(settings)
@@ -137,8 +169,12 @@ function winToggle(callback, mobile, winLeft) {
                 browser.windows.onRemoved.addListener((id) => {
                     winId = null
                     winLoaded = false
-                    winUser = null
-                    winCommunities = null
+                    
+                    disCookies = null
+                    disSession = null
+                    disUser = null
+                    disCommunities = null
+                    
                     extLoaded = false
                 })
             },

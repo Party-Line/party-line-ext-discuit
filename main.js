@@ -5,8 +5,8 @@
 // TODO: figure out branding for icons and Disc header
 
 // TODO: verify everything is working on all Desktop browsers and iPhone Chrome
-// TODO: get persistent chat logging working
-// TODO: get Discuit accounts / login integrated
+// TODO: get persistent chat logs working
+// TODO: add error handling for login / logged out
 
 // minimize the chat window when Discuit is clicked
 window.addEventListener('click', (event) => {

@@ -11,6 +11,18 @@ window.addEventListener('message', (event) => {
                 if (message) {
                     let value = (event.data.get) ? message : message.data
                     
+                    if (event.data.action == 'window-verify') {
+                        let jwt = value
+                        
+                        // save the JSON web token
+                        sessionStorage.setItem('jwt', jwt)
+                        
+                        // wait until the data has been written
+                        while (sessionStorage.getItem('jwt') !== jwt) {}
+                        
+                        value = true
+                    }
+                    
                     // browsers no longer allow you to send data from an extension to a webpage in a custom event
                     // and so we save the data to session storage and dispatch an event telling the webpage to get it
                     sessionStorage.setItem(event.data.action, JSON.stringify(value))
