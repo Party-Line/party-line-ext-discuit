@@ -32,16 +32,22 @@ browser.runtime.onMessage.addListener(function (request, sender, callback) {
                 }
                 break
             case 'ext-data' :
-                callback({
-                    action: request.action,
-                    
+                let data = null
+                
+                // verify we are logged in and have some data
+                if (disSession && disUser !== null && disCommunities !== null) {
                     // TODO: distill the Discuit specific community 
                     // data into a common object format
-                    data: {
+                    data = {
                         sid: disSession,
                         username: disUser.username,
                         channels: disCommunities
                     }
+                }
+                
+                callback({
+                    action: request.action,
+                    data: data
                 })
                 break
         }
@@ -81,7 +87,13 @@ function disInit() {
         method: 'GET',
         credentials: 'include'
     })
-    .then((response) => response.json())
+    .then((response) => {
+        if (response.status == 200) {
+            return response.json()
+        } else {
+            return null
+        }
+    })
     .then((user) => {
         disUser = user
     })
@@ -90,7 +102,13 @@ function disInit() {
         method: 'GET',
         credentials: 'include'
     })
-    .then((response) => response.json())
+    .then((response) => {
+        if (response.status == 200) {
+            return response.json()
+        } else {
+            return null
+        }
+    })
     .then((communities) => {
         disCommunities = communities
     })
