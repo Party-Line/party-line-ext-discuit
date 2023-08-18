@@ -2,8 +2,6 @@
 // chrome://extensions
 
 // TODO: fix chat window height / shrinking issue
-// TODO: figure out branding for icons and Disc header
-
 // TODO: verify everything is working on all Desktop browsers and iPhone Chrome
 // TODO: get persistent chat logs working
 

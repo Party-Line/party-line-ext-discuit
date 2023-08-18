@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
-    "name": "Discuit Chat",
-    "description": "Adds a Party Line to Discuit",
+    "name": "Party Line",
+    "description": "A cross-platform, browser extension that integrates live chat into Discuit.",
     "version": "0.1.0",
     "content_scripts": [
         {
