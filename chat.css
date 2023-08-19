@@ -24,3 +24,11 @@
 .bg-primary {
     background-color: #6B02F2 !important;
 }
+
+.border-primary {
+    border-color: #6B02F2 !important;
+}
+
+hr {
+    opacity: 1.0 !important;
+}
