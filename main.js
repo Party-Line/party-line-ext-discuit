@@ -1,9 +1,9 @@
 // about:debugging#/runtime/this-firefox
 // chrome://extensions
 
+// TODO: look into the port disconnect / login issue
 // TODO: fix chat window height / shrinking issue
-// TODO: verify everything is working on all Desktop browsers and iPhone Chrome
-// TODO: get persistent chat logs working
+// TODO: get emoticons and multiline text working
 
 // minimize the chat window when Discuit is clicked
 window.addEventListener('click', (event) => {
