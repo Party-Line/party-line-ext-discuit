@@ -1,3 +1,7 @@
+if (!('browser' in self)) {
+    self.browser = self.chrome
+}
+
 // look for messages from the chat window
 window.addEventListener('message', (event) => {
     // make sure the message is coming from us

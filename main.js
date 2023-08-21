@@ -1,9 +1,12 @@
 // about:debugging#/runtime/this-firefox
 // chrome://extensions
 
-// TODO: look into the port disconnect / login issue
 // TODO: fix chat window height / shrinking issue
 // TODO: get emoticons and multiline text working
+
+if (!('browser' in self)) {
+    self.browser = self.chrome
+}
 
 // minimize the chat window when Discuit is clicked
 window.addEventListener('click', (event) => {
@@ -80,7 +83,12 @@ function winToggle(event) {
     browser.runtime.sendMessage(
         {
             action: 'window-toggle',
-            mobile: (window.screen.width < 900) ? true : false,
+            window: {
+                screen: {
+                    width: window.screen.width,
+                    height: window.screen.height
+                }
+            },
             left: sidebarLeft
         }
     )

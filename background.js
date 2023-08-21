@@ -1,9 +1,13 @@
+if (!('browser' in self)) {
+    self.browser = self.chrome
+}
+
 // look for messages from the content scripts
 browser.runtime.onMessage.addListener(function (request, sender, callback) {
     if (request) {
         switch (request.action) {
             case 'window-toggle' :
-                winToggle(callback, request.mobile, request.left)
+                winToggle(callback, request.window, request.left)
                 break
             case 'window-minimize' :
                 winMinimize(callback)
@@ -64,11 +68,36 @@ var disCommunities = null
 
 var extLoaded = false
 
+// allows the global variables to persist
+function keepAlive(settings) {
+    let wsURL = settings.url.replace('http', 'ws')
+    let ws = new WebSocket(wsURL + ':8080')
+
+    ws.onmessage = function (event) {
+        // send a keep alive before the service worker
+        // becomes inactive (i.e. 30 seconds)
+        setTimeout(function () {
+            ws.send(JSON.stringify({ type: 'keepalive' }))
+        }, 20000)
+    }
+
+    ws.onclose = function (event) {
+        // restart the web socket connection
+        setTimeout(keepAlive, 20000, settings)
+    }
+
+    ws.onopen = function (event) {
+        ws.send(JSON.stringify({ type: 'keepalive' }))
+    }
+}
+
 // Note: onMessage callbacks can not be called within a fetch promise
 // and so the client can't make API calls and get a response back.
 // So, to get around this we get all API data during window creation
 // and cache it for later usage.
-function disInit() {
+function disInit(settings) {
+    keepAlive(settings)
+    
     let pCookies = browser.cookies.getAll({ url: 'https://discuit.net' })
     .then((cookies) => {
         disCookies = cookies
@@ -118,8 +147,10 @@ function disInit() {
     })
 }
 
-function winToggle(callback, mobile, winLeft) {
+function winToggle(callback, window, winLeft) {
     if (winId === null) {
+        let mobile = (window.screen.width < 900) ? true : false
+        
         // go fullscreen on smaller devices
         // TODO: verify this actually works on mobile
         //       state / maximized doesn't seem to work
@@ -175,7 +206,7 @@ function winToggle(callback, mobile, winLeft) {
         callback({ action: 'window-loading' })
         
         // get the Discuit data
-        disInit()
+        disInit(settings)
         
         // create the chat window
         browser.windows.create(settings)

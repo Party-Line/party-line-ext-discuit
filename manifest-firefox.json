@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Party Line",
-    "description": "A cross-platform, browser extension that integrates live chat into Discuit.",
+    "description": "A browser extension that integrates live chat into Discuit.",
     "version": "0.1.0",
     "content_scripts": [
         {
@@ -9,7 +9,6 @@
                 "https://*.discuit.net/*"
             ],
             "js": [
-                "browser-polyfill.min.js",
                 "main.js"
             ]
         },
@@ -19,7 +18,6 @@
                 "http://localhost/*"
             ],
             "js": [
-                "browser-polyfill.min.js",
                 "chat.js"
             ],
             "css": [
@@ -32,13 +30,15 @@
         "96": "icon.png"
     },
     "permissions": [
-        "<all_urls>",
-        "cookies"
+        "cookies",
+        "https://*.discuit.net/*"
     ],
     "background": {
-        "scripts": [
-            "browser-polyfill.min.js",
-            "background.js"
-        ]
+        "scripts": ["background.js"]
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{3756844a-d512-461e-bb22-57b4d147a4e9}"
+        }
     }
 }
