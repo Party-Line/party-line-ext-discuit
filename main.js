@@ -1,6 +1,7 @@
 // about:debugging#/runtime/this-firefox
 // chrome://extensions
 
+// TODO: create a build script for the manifest
 // TODO: fix chat window height / shrinking issue
 // TODO: get emoticons and multiline text working
 
