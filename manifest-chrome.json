@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Party Line",
     "description": "A browser extension that integrates live chat into Discuit.",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "content_scripts": [
         {
             "matches": [
@@ -26,8 +26,7 @@
         }
     ],
     "icons": {
-        "48": "icon.png",
-        "96": "icon.png"
+        "128": "icon.png"
     },
     "permissions": [
         "cookies"
