@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Party Line",
     "description": "A browser extension that integrates live chat into Discuit.",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "content_scripts": [
         {
             "matches": [
@@ -14,8 +14,7 @@
         },
         {
             "matches": [
-                "https://*.discuitchat.net/*",
-                "http://localhost/*"
+                "https://*.discuitchat.net/*"
             ],
             "js": [
                 "chat.js"
