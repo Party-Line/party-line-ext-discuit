@@ -10,6 +10,9 @@
             ],
             "js": [
                 "main.js"
+            ],
+            "css": [
+                "main.css"
             ]
         },
         {
@@ -34,6 +37,10 @@
     "background": {
         "scripts": ["background.js"]
     },
+    "web_accessible_resources": [
+        "toggle.png",
+        "toggle-new.png"
+    ],
     "browser_specific_settings": {
         "gecko": {
             "id": "{3756844a-d512-461e-bb22-57b4d147a4e9}"

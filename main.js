@@ -1,13 +1,25 @@
 // about:debugging#/runtime/this-firefox
 // chrome://extensions
+// edge://extensions
 
 // TODO: create a build script for the manifest
+// TODO: get client authentication keys working
 // TODO: fix chat window height / shrinking issue
-// TODO: get emoticons and multiline text working
+// TODO: add the ability to create / manage channels
+// TODO: get unicode emoticons working
+// TODO: try docking to Discuit by using a DIV / IFrame
+// TODO: add the ability to list active users in a channel
+// TODO: leaving the window open causes new messages to not appear or send (timeout / port issue)
 
 if (!('browser' in self)) {
     self.browser = self.chrome
 }
+
+var toggleURL = browser.runtime.getURL('toggle.png')
+var toggleIMG = '<img src="' + toggleURL + '" />'
+
+var toggleNewURL = browser.runtime.getURL('toggle-new.png')
+var toggleNewIMG = '<img src="' + toggleNewURL + '" />'
 
 // minimize the chat window when Discuit is clicked
 window.addEventListener('click', (event) => {
@@ -43,18 +55,50 @@ function winLoading() {
         function (loaded) {
             if (loaded) {
                 // hide the loading icon
-                plToggle.innerHTML = '💬️'
+                plToggle.innerHTML = toggleIMG
                 plToggle.style.transform = 'none'
+                plToggle.style.marginTop = '0px'
+                
+                // look for new messages
+                winMessage()
             } else {
                 // rotate the icon while we wait
                 if (plToggle.style.transform == 'none') {
                     plToggle.style.transform = 'rotate(90deg)'
+                    plToggle.style.marginTop = '10px'
                 } else {
                     plToggle.style.transform = 'none'
+                    plToggle.style.marginTop = '0px'
                 }
                 
                 setTimeout(winLoading, 250)
             }
+        }
+    )
+}
+
+// chat window messages
+function winMessage() {
+    let plToggle = document.querySelector('#pl-toggle')
+    
+    // does the chat window have a new message
+    browser.runtime.sendMessage({ action: 'window-message', get: true })
+    .then(
+        // on callback
+        function (message) {
+            if (message) {
+                // update the toggle icon to new
+                if (plToggle.innerHTML !== toggleNewIMG) {
+                    plToggle.innerHTML = toggleNewIMG
+                }
+            } else {
+                // revert the toggle icon to its default
+                if (plToggle.innerHTML !== toggleIMG) {
+                    plToggle.innerHTML = toggleIMG
+                }
+            }
+            
+            setTimeout(winMessage, 1000)
         }
     )
 }
@@ -119,7 +163,7 @@ function init() {
         // create a new chat button
         let div = document.createElement('div')
         div.id = 'pl-toggle'
-        div.innerHTML = '💬️'
+        div.innerHTML = toggleIMG
         div.onclick = winToggle
         div.style.cursor = 'pointer'
         

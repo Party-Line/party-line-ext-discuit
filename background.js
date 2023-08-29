@@ -22,6 +22,21 @@ browser.runtime.onMessage.addListener(function (request, sender, callback) {
                     winLoaded = true
                 }
                 break
+            case 'window-message' :
+                if (request.get) {
+                    callback(winMessage)
+                } else {
+                    // get the chat window info
+                    browser.windows.get(winId)
+                    .then((win) => {
+                        if (win.state === 'minimized') {
+                            winMessage = true
+                        } else {
+                            winMessage = false
+                        }
+                    })
+                }
+                break
             case 'window-verify' :
                 // verify the data from the client matches what we have in the extension
                 if (request.data.sid == disSession && request.data.username == disUser.username) {
@@ -60,6 +75,7 @@ browser.runtime.onMessage.addListener(function (request, sender, callback) {
 
 var winId = null
 var winLoaded = false
+var winMessage = false
 
 var disCookies = null
 var disSession = null
@@ -218,6 +234,7 @@ function winToggle(callback, window, winLeft) {
                 browser.windows.onRemoved.addListener((id) => {
                     winId = null
                     winLoaded = false
+                    winMessage = false
                     
                     disCookies = null
                     disSession = null
@@ -250,7 +267,12 @@ function winToggle(callback, window, winLeft) {
                 } else {
                     browser.windows.update(win.id, {
                         state: 'normal'
-                    })
+                    }).then(
+                        // on update
+                        function (win) {
+                            winMessage = false
+                        }
+                    )
                 }
             },
             

@@ -10,6 +10,9 @@
             ],
             "js": [
                 "main.js"
+            ],
+            "css": [
+                "main.css"
             ]
         },
         {
@@ -35,5 +38,16 @@
     ],
     "background": {
         "service_worker": "background.js"
-    }
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "toggle.png",
+                "toggle-new.png"
+            ],
+            "matches": [
+                "https://*.discuit.net/*"
+            ]
+        }
+    ]
 }
