@@ -7,8 +7,7 @@
 // TODO: fix chat window height / shrinking issue
 // TODO: get unicode emoticons working
 // TODO: add the ability to create / manage channels
-// TODO: change the innerHTML toggle logic to use a DOM node instead
-// TODO: verify new message still works
+// TODO: change the innerHTML logic to use the DOM
 
 if (!('browser' in self)) {
     self.browser = self.chrome
