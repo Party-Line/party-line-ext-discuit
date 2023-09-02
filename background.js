@@ -57,7 +57,11 @@ browser.runtime.onMessage.addListener(function (request, sender, callback) {
                 if (request.get) {
                     callback(winMessage)
                 } else {
-                    winMessage = request.value
+                    if (winDisplay == 'minimize') {
+                        winMessage = true
+                    } else {
+                        winMessage = false
+                    }
                 }
                 break
             case 'window-verify' :
@@ -78,7 +82,7 @@ var wsTimer = null
 var extLoaded = false
 
 var winLoaded = false
-var winDisplay = 'max'
+var winDisplay = 'maximize'
 var winMessage = false
 
 var disCookies = null
@@ -119,7 +123,7 @@ function extShutdown() {
     extLoaded = false
 
     winLoaded = false
-    winDisplay = 'max'
+    winDisplay = 'maximize'
     winMessage = false
 
     disCookies = null
