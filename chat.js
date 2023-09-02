@@ -12,7 +12,7 @@ window.addEventListener('message', (event) => {
     .then(
             // on callback
             function(message) {
-                if (message) {
+                if (typeof message !== 'undefined') {
                     let value = (event.data.get) ? message : message.data
                     
                     if (event.data.action == 'window-verify') {
